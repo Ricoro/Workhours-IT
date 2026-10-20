@@ -8,6 +8,30 @@ A private, local-first browser app for recording IT work for **EC, ENAB, 4SOME a
 - `test`: the working app and all development changes. Work only on this branch.
 - Do not merge or push to `main` without the owner's explicit instruction. See `AGENTS.md`.
 
+## GitHub Pages test website
+
+This app can be hosted like LoadingListChecker. The deployment workflow builds and tests **only `test`**, then publishes **only `dist/`** through GitHub Pages. It never merges, commits or pushes to `main`. GitHub Actions used by the workflow are pinned to verified upstream commits.
+
+The expected website address after a successful deployment is **https://ricoro.github.io/Workhours-IT/**. Saving the workflow alone does not make this address live.
+
+One-time owner setup:
+
+1. Open **https://github.com/Ricoro/Workhours-IT/settings/pages**. Under **Build and deployment → Source**, choose **GitHub Actions**.
+2. In **Settings → Environments → github-pages**, ensure the deployment branch rules allow **`test`** (selected branches: `test`). If the environment does not exist yet, create it with that name and allow `test`.
+3. In the repository's **Actions** tab, open **Deploy test app to GitHub Pages** and rerun the run triggered by the latest push to `test` if it failed before Pages was enabled. Later pushes to `test` deploy automatically after all tests pass.
+4. Use the website URL shown by the successful deployment. The repository remains private. If GitHub requires a plan upgrade for Pages on private repositories, keep it private and choose an eligible plan or a different hosting service.
+
+The website is normally publicly accessible, even from a private repository. It contains the app, not your recorded hours: entries stay in your browser and Excel writes go to your chosen local folder. Publishing is not a login system. Actual OneDrive upload remains the responsibility of the desktop sync client.
+
+The hosted site and localhost have separate browser storage. To move existing entries, download a JSON backup from the old address and restore it at the new address. Continue making backups. This cloud environment cannot access the Pages settings API or verify the hosted URL; the owner must enable Pages and inspect deployment success in GitHub.
+
+Reproduce the deployed-path checks locally:
+
+```sh
+npm run build
+PLAYWRIGHT_APP_PATH=/Workhours-IT/ PLAYWRIGHT_SERVER_COMMAND="npm run preview -- --base=/Workhours-IT/ --port 5174 --strictPort" npm run test:e2e
+```
+
 ## Open the test app on your computer
 
 Install Node.js 22+ and Git, then use a terminal:

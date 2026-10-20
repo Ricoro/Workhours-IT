@@ -15,7 +15,7 @@ export default defineConfig({
     command:
       process.env.PLAYWRIGHT_SERVER_COMMAND ||
       "npm run dev -- --port 5174 --strictPort",
-    url: "http://127.0.0.1:5174",
+    url: `http://127.0.0.1:5174${process.env.PLAYWRIGHT_APP_PATH || "/"}`,
     reuseExistingServer: false,
   },
   workers: 1,

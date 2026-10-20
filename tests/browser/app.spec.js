@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
 import ExcelJS from "exceljs";
+const appPath = process.env.PLAYWRIGHT_APP_PATH || "/";
 test("save, reload, edit, filter, Excel export, dark mode and delete", async ({
   page,
 }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
+  await page.goto(appPath);
   await page.locator("#date").fill("2026-10-20");
   await page.locator("#notes").fill("Set up laptop <script>alert(1)</script>");
   await page.getByLabel("EC hours", { exact: true }).fill("1.25");
@@ -52,7 +53,7 @@ test("draft, responsive layout, backup restore and invalid input", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto(appPath);
   await expect(page.locator("h1")).toBeVisible();
   expect(
     await page.evaluate(
@@ -89,7 +90,7 @@ test("draft, responsive layout, backup restore and invalid input", async ({
 test("linked Excel workbook updates on save, edit and delete", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto(appPath);
   await page.evaluate(async () => {
     const root = await navigator.storage.getDirectory();
     const folder = await root.getDirectoryHandle("excel-test", {
@@ -168,7 +169,7 @@ test("saving entries still works when localStorage preferences and drafts are un
       throw new DOMException("Storage denied", "SecurityError");
     };
   });
-  await page.goto("/");
+  await page.goto(appPath);
   await expect(page.locator("#save")).toBeEnabled();
   await page.locator("#date").fill("2026-10-20");
   await page.locator("#notes").fill("Saved despite unavailable preferences");
@@ -192,7 +193,7 @@ test("saving entries still works when localStorage preferences and drafts are un
 test("invalid backups are rejected atomically and corrupt drafts do not block saved entries", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto(appPath);
   await page.locator("#date").fill("2026-10-20");
   await page.locator("#notes").fill("Keep this task");
   await page.getByLabel("EC hours", { exact: true }).fill("1");
@@ -235,7 +236,7 @@ test("invalid backups are rejected atomically and corrupt drafts do not block sa
 test("Excel write failure preserves entries and reconnect retries the file", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto(appPath);
   await page.evaluate(async () => {
     const folder = await (
       await navigator.storage.getDirectory()
@@ -298,7 +299,7 @@ test("Excel write failure preserves entries and reconnect retries the file", asy
 test("linking a folder preserves an existing workbook when overwrite is declined", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto(appPath);
   await page.evaluate(async () => {
     const folder = await (
       await navigator.storage.getDirectory()
