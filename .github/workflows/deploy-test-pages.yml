@@ -40,7 +40,7 @@ jobs:
         env:
           PLAYWRIGHT_APP_PATH: /Workhours-IT/
           PLAYWRIGHT_SERVER_COMMAND: npm run preview -- --base=/Workhours-IT/ --port 5174 --strictPort
-        run: npm run test:e2e
+        run: npm run test:e2e -- --reporter=github
       - name: Check Pages configuration
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Upload built website only

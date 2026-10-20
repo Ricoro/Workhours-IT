@@ -1,6 +1,6 @@
 # Workhours IT
 
-A private, local-first browser app for recording IT work for **EC, ENAB, 4SOME and SEABOW**. Split a task across companies, see monthly company totals, search/filter entries, edit/delete work, and switch between light and dark modes.
+A local-first browser app for recording IT work for **EC, ENAB, 4SOME and SEABOW**. Split a task across companies, see monthly company totals, search/filter entries, edit/delete work, and switch between light and dark modes.
 
 ## Main and test versions
 
@@ -19,7 +19,7 @@ One-time owner setup:
 1. Open **https://github.com/Ricoro/Workhours-IT/settings/pages**. Under **Build and deployment → Source**, choose **GitHub Actions**.
 2. In **Settings → Environments → github-pages**, ensure the deployment branch rules allow **`test`** (selected branches: `test`). If the environment does not exist yet, create it with that name and allow `test`.
 3. In the repository's **Actions** tab, open **Deploy test app to GitHub Pages** and rerun the run triggered by the latest push to `test` if it failed before Pages was enabled. Later pushes to `test` deploy automatically after all tests pass.
-4. Use the website URL shown by the successful deployment. The repository remains private. If GitHub requires a plan upgrade for Pages on private repositories, keep it private and choose an eligible plan or a different hosting service.
+4. Use the website URL shown by the successful deployment. The owner has made the repository public so it can use GitHub Pages without private-repository plan restrictions.
 
 The website is normally publicly accessible, even from a private repository. It contains the app, not your recorded hours: entries stay in your browser and Excel writes go to your chosen local folder. Publishing is not a login system. Actual OneDrive upload remains the responsibility of the desktop sync client.
 
@@ -43,7 +43,7 @@ npm ci
 npm run dev -- --port 5173 --strictPort --open
 ```
 
-If you already have the repository, preserve any local changes, switch with `git switch test`, and run the npm commands from that checkout. GitHub may ask you to sign in to access this private repository.
+If you already have the repository, preserve any local changes, switch with `git switch test`, and run the npm commands from that checkout. The repository is public; its source code can be downloaded without signing in.
 
 The app opens in your browser at **http://127.0.0.1:5173/**. Keep the terminal running while using it; stop with Ctrl+C. This address works on the computer running the command. It is not an externally hosted site. On later visits, start it using the same command and browser profile so your saved entries remain available.
 
@@ -93,7 +93,7 @@ Browsers without folder access still support saved entries, Excel downloads and 
 - Use **Backup & restore → Download backup** regularly. Restore validates the entire backup before importing, merges entries by ID, and replaces matching IDs. JSON backups retain entry IDs; Excel exports are not restorable through the app.
 - Browser entries do not sync between devices. OneDrive receives the generated workbook only through its desktop client; it does not synchronize the app's browser database. Concurrent edits across devices are not supported.
 - Do not commit workbooks, backups or confidential records. `.gitignore` excludes `.xlsb`/`.xlsx`; keep JSON backups outside the checkout.
-- `private: true` in `package.json` prevents npm publishing. **It does not make the GitHub repository private.** The repository owner has confirmed that **Ricoro/Workhours-IT is private**. Also verify deployment access separately; a private GitHub repository does not protect a publicly hosted app.
+- `private: true` in `package.json` prevents npm publishing. **It does not make the GitHub repository private.** The owner has made **Ricoro/Workhours-IT public**; source code and Git history are public, while entries and chosen local Excel files are not uploaded to GitHub. Also verify deployment access separately; a private GitHub repository does not protect a publicly hosted app.
 
 ## Cloud development
 

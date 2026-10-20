@@ -6,4 +6,4 @@
 - Push development updates only to `origin test`, with an explicit refspec. Never use `git push --all`, mirror pushes, force pushes, or an implicit push that could update main.
 - Work in this existing isolated cloud checkout. Do not create additional worktrees unless the user requests them.
 - Before saving development work, run `npm test`, `npm run build`, and production browser checks with `PLAYWRIGHT_SERVER_COMMAND='npm run preview -- --port 5174 --strictPort' npm run test:e2e`.
-- Keep company records, workbooks, and JSON backups out of Git. The repository owner has confirmed it is private.
+- Keep company records, workbooks, and JSON backups out of Git. The owner has made the repository public. Never commit private company data.
