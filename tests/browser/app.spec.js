@@ -37,7 +37,8 @@ test("save, reload, edit, filter, Excel export, dark mode and delete", async ({
   const file = await downloadPromise;
   const wb = new ExcelJS.Workbook();
   await wb.xlsx.readFile(await file.path());
-  expect(wb.getWorksheet("2026-10").getCell("C2").value).toBe(2);
+  expect(wb.getWorksheet("October 2026").getCell("C2").value).toBe(2);
+  expect(wb.getWorksheet("October 2026").getCell("D2").value).toBe(12);
   expect(wb.getWorksheet("Summary").getCell("B6").value).toBe(2.5);
   await page.locator("#theme").click();
   const theme = await page.locator("html").getAttribute("data-theme");
@@ -125,7 +126,7 @@ test("linked Excel workbook updates on save, edit and delete", async ({
     )
     .toBe(2.5);
   let book = await readExcel();
-  expect(book.getWorksheet("2026-10").getCell("A2").value).toBe("SEABOW");
+  expect(book.getWorksheet("October 2026").getCell("A2").value).toBe("SEABOW");
   expect(book.getWorksheet("Summary").getCell("B6").value).toBe(2.5);
   await page.getByRole("button", { name: "Edit entry", exact: true }).click();
   await page.getByLabel("SEABOW hours", { exact: true }).fill("3");
@@ -150,7 +151,7 @@ test("linked Excel workbook updates on save, edit and delete", async ({
     .toBe(0);
   book = await readExcel();
   expect(book.getWorksheet("Summary").getCell("B6").value).toBe(0);
-  expect(book.getWorksheet("2026-10")).toBeUndefined();
+  expect(book.getWorksheet("October 2026")).toBeUndefined();
 });
 
 test("saving entries still works when localStorage preferences and drafts are unavailable", async ({
@@ -323,4 +324,126 @@ test("linking a folder preserves an existing workbook when overwrite is declined
       ).text();
     }),
   ).toBe("existing confidential workbook");
+});
+
+test("employee ID is automatic and copyright appears in the footer", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("workhours-employee", "99"),
+  );
+  await page.goto(appPath);
+  await expect(page.getByLabel("Employee ID", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".copyright")).toHaveText("© Rico Impens 2026");
+  await page.locator("#date").fill("2026-10-20");
+  await page.locator("#notes").fill("Automatic employee export");
+  await page.getByLabel("EC hours", { exact: true }).fill("1");
+  await page.locator("#save").click();
+  await expect(page.locator("#count")).toHaveText("1");
+  await expect(page.locator(".employee-note")).toHaveCount(0);
+  const pending = page.waitForEvent("download");
+  await page.locator("#export").click();
+  const file = await pending;
+  const book = new ExcelJS.Workbook();
+  await book.xlsx.readFile(await file.path());
+  expect(book.getWorksheet("October 2026").getCell("D2").value).toBe(12);
+});
+
+test("dark mode has a dark canvas and readable text contrast", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("workhours-theme", "dark"),
+  );
+  await page.goto(appPath);
+  await page.locator("#notes").fill("Dark theme contrast check");
+  await page.getByLabel("EC hours", { exact: true }).fill("1");
+  await page.locator("#save").click();
+  await expect(page.locator("#count")).toHaveText("1");
+  const result = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const rgba = (color) => {
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1, 1);
+      return [...ctx.getImageData(0, 0, 1, 1).data].map((v, i) =>
+        i === 3 ? v / 255 : v,
+      );
+    };
+    const over = (fg, bg) =>
+      fg.slice(0, 3).map((v, i) => v * fg[3] + bg[i] * (1 - fg[3]));
+    const luminance = (color) =>
+      color
+        .slice(0, 3)
+        .map((v) => {
+          v /= 255;
+          return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+        })
+        .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+    const background = (el) => {
+      const chain = [];
+      for (let node = el; node; node = node.parentElement) chain.unshift(node);
+      return chain.reduce(
+        (bg, node) => over(rgba(getComputedStyle(node).backgroundColor), bg),
+        [255, 255, 255],
+      );
+    };
+    const selectors = [
+      "h1",
+      ".panel-title h2",
+      "#entry-form label",
+      ".heading p",
+      ".task-notes",
+      ".task-date",
+      ".badge",
+      ".backup-copy h3",
+      ".backup-copy p",
+      "#sync-status",
+      ".save-hint",
+      ".footer",
+      ".allocation-heading > span",
+      ".period-note",
+      ".breadcrumb",
+      ".stat > span",
+      ".total-stat > div",
+      ".copyright",
+    ];
+    const checks = selectors.flatMap((selector) =>
+      [...document.querySelectorAll(selector)]
+        .filter(
+          (el) => el.getBoundingClientRect().width && el.textContent.trim(),
+        )
+        .map((el) => {
+          const bg = background(el);
+          const fg = over(rgba(getComputedStyle(el).color), bg);
+          const [high, low] = [luminance(fg), luminance(bg)].sort(
+            (a, b) => b - a,
+          );
+          return { selector, ratio: (high + 0.05) / (low + 0.05) };
+        }),
+    );
+    return {
+      canvasLuminance: luminance(background(document.documentElement)),
+      checks,
+    };
+  });
+  expect.soft(result.canvasLuminance).toBeLessThan(0.05);
+  for (const check of result.checks)
+    expect.soft(check.ratio, check.selector).toBeGreaterThanOrEqual(4.5);
+  await page.screenshot({
+    path: "/tmp/workhours-dark-desktop.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+  await page.screenshot({
+    path: "/tmp/workhours-dark-mobile.png",
+    fullPage: true,
+  });
 });

@@ -45,9 +45,9 @@ test("Excel roundtrip preserves original columns, dates, hours and untrusted tex
   await book.xlsx.load(await workbook([entry, other]));
   assert.deepEqual(
     book.worksheets.map((s) => s.name),
-    ["Summary", "2026-10", "2026-11"],
+    ["Summary", "October 2026", "November 2026"],
   );
-  const sheet = book.getWorksheet("2026-10");
+  const sheet = book.getWorksheet("October 2026");
   assert.deepEqual(sheet.getRow(1).values.slice(1, 8), [
     "Account",
     "Date",
@@ -66,14 +66,14 @@ test("Excel roundtrip preserves original columns, dates, hours and untrusted tex
   assert.equal(sheet.getCell("J6").value, 1.75);
   assert.equal(book.getWorksheet("Summary").getCell("B6").value, 3.75);
   assert.equal(
-    book.getWorksheet("2026-11").getCell("F2").type,
+    book.getWorksheet("November 2026").getCell("F2").type,
     ExcelJS.ValueType.String,
   );
   const monthly = new ExcelJS.Workbook();
   await monthly.xlsx.load(await workbook([entry, other], "2026-10"));
   assert.deepEqual(
     monthly.worksheets.map((s) => s.name),
-    ["Summary", "2026-10"],
+    ["Summary", "October 2026"],
   );
   assert.equal(monthly.getWorksheet("Summary").getCell("B6").value, 1.75);
 });
@@ -99,6 +99,20 @@ test("malformed dates fail safely and decimal allocations accept an exact 24 hou
     ...entry,
     allocations: { EC: 0.01, ENAB: 23.98, "4SOME": 0.01 },
   });
-  for (const employee of [{}, [], NaN, Infinity, "   "])
-    assert.throws(() => validateEntry({ ...entry, employee }), /employee ID/);
+});
+
+test("Excel always exports employee 12 and labels tabs across year boundaries", async () => {
+  const legacy = { ...entry, employee: "99", date: "2026-12-31" };
+  const nextYear = { ...entry, employee: undefined, date: "2027-01-01" };
+  validateEntry(nextYear);
+  const book = new ExcelJS.Workbook();
+  await book.xlsx.load(await workbook([legacy, nextYear]));
+  assert.deepEqual(
+    book.worksheets.map((s) => s.name),
+    ["Summary", "December 2026", "January 2027"],
+  );
+  for (const name of ["December 2026", "January 2027"]) {
+    assert.equal(book.getWorksheet(name).getCell("D2").value, 12);
+    assert.equal(book.getWorksheet(name).getCell("D3").value, 12);
+  }
 });

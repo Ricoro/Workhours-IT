@@ -19,7 +19,13 @@ export async function workbook(entries, month) {
     ? [month]
     : [...new Set(selected.map((e) => e.date.slice(0, 7)))].sort();
   for (const m of months) {
-    const sheet = book.addWorksheet(m);
+    const sheet = book.addWorksheet(
+      new Date(`${m}-01T12:00:00Z`).toLocaleDateString("en-GB", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      }),
+    );
     sheet.addRow([
       "Account",
       "Date",

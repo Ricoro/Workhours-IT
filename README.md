@@ -71,12 +71,12 @@ Tests start their own server on port 5174 and never reuse your development serve
 
 ## Record and export hours
 
-1. Choose the date, employee ID (defaults to `12`, matching the example workbook), and describe the work.
+1. Choose the date and describe the work. Employee ID is automatically fixed to `12` in Excel; there is no employee field to fill in.
 2. Enter decimal hours for each company involved. `1.5` is one hour and 30 minutes. Each task can total up to 24 hours, with two decimal places.
 3. Click **Save entry**. The committed entry is stored in IndexedDB; unfinished form changes are saved as a draft in localStorage. Editing a task replaces it rather than adding duplicate hours.
 4. Select a month and choose **Export month** for a real `.xlsx` workbook. Export includes all companies for that month, regardless of activity search/filter settings.
 
-Exports preserve the example workbook's seven columns: `Account`, `Date`, `Quantity`, `Employee`, `Item`, `Notes`, `Project`. Each company allocation is a separate Excel row, with a numeric quantity, Excel date, `WH` item and `WH_<company>` project. A Summary sheet and monthly company totals are included. The app generates a new `.xlsx`; it does not modify or import the supplied `.xlsb` workbook, historical records, formatting or macros. No example company records are bundled in the app or committed.
+Exports preserve the example workbook's seven columns: `Account`, `Date`, `Quantity`, `Employee`, `Item`, `Notes`, `Project`. Each company allocation is a separate Excel row, with a numeric quantity, Excel date, `WH` item and `WH_<company>` project. Tabs use full English month names and years, such as `October 2026` and `January 2027`. A Summary sheet and monthly company totals are included. Existing entries and restored backups also export with employee `12`. The app generates a new `.xlsx`; it does not modify or import the supplied `.xlsb` workbook, historical records, formatting or macros. No example company records are bundled in the app or committed.
 
 ## Automatic Excel file and OneDrive
 

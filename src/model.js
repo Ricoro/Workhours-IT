@@ -1,3 +1,4 @@
+export const EMPLOYEE_ID = 12;
 export const COMPANIES = ["EC", "ENAB", "4SOME", "SEABOW"];
 export function localDate() {
   const d = new Date();
@@ -25,13 +26,6 @@ export function validateEntry(entry) {
     entry.notes.length > 10000
   )
     throw new Error("Describe the work (up to 10,000 characters).");
-  if (
-    !["string", "number"].includes(typeof entry.employee) ||
-    !String(entry.employee).trim() ||
-    String(entry.employee).length > 50 ||
-    (typeof entry.employee === "number" && !Number.isFinite(entry.employee))
-  )
-    throw new Error("Enter an employee ID (up to 50 characters).");
   if (
     !entry.allocations ||
     Object.keys(entry.allocations).some((c) => !COMPANIES.includes(c))
@@ -73,7 +67,7 @@ export function rows(entries) {
         c,
         new Date(`${e.date}T12:00:00Z`),
         e.allocations[c],
-        e.employee,
+        EMPLOYEE_ID,
         "WH",
         e.notes,
         `WH_${c}`,
