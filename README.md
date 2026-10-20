@@ -67,7 +67,7 @@ PLAYWRIGHT_SERVER_COMMAND="npm run preview -- --port 5174 --strictPort" npm run 
                  # Test the built production app on its own server
 ```
 
-Tests start their own server on port 5174 and never reuse your development server. Browser tests use `/usr/bin/chromium` in the cloud environment. Elsewhere set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to your Chrome/Chromium executable, or run `npx playwright install chromium` to use Playwright's browser.
+Tests start their own server on port 5174 and never reuse your development server. Browser tests use `/usr/bin/chromium` in the cloud environment. GitHub Actions explicitly uses the Playwright-managed browser installed for the pinned package version, so a preinstalled system browser cannot override it. Elsewhere set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to your Chrome/Chromium executable, or run `npx playwright install chromium` to use Playwright's browser.
 
 ## Record and export hours
 

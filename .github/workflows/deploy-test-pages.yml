@@ -36,6 +36,15 @@ jobs:
         run: npm run build
       - name: Install browser for functional tests
         run: npx playwright install --with-deps chromium
+      - name: Verify pinned test browser
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from '@playwright/test';
+          import config from './playwright.config.js';
+          const browser = await chromium.launch(config.use.launchOptions);
+          console.log(`::notice title=Test browser::Chromium ${browser.version()} using ${config.use.launchOptions.executablePath || 'Playwright-managed browser'}`);
+          await browser.close();
+          JS
       - name: Test production app at GitHub Pages path
         env:
           PLAYWRIGHT_APP_PATH: /Workhours-IT/

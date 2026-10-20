@@ -7,7 +7,9 @@ export default defineConfig({
     launchOptions: {
       executablePath:
         process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
-        (existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : undefined),
+        (!process.env.CI && existsSync("/usr/bin/chromium")
+          ? "/usr/bin/chromium"
+          : undefined),
       args: ["--no-sandbox"],
     },
   },
