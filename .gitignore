@@ -1,0 +1,8 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.xlsx
+*.xlsb
+*.json.backup
+workhours-backup-*.json
