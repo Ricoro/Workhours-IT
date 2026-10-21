@@ -405,7 +405,6 @@ test("dark mode has a dark canvas and readable text contrast", async ({
       ".footer",
       ".allocation-heading > span",
       ".period-note",
-      ".breadcrumb",
       ".stat > span",
       ".total-stat > div",
       ".copyright",
