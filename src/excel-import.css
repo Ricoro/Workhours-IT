@@ -1,0 +1,145 @@
+#excel-review {
+  width: min(900px, 94vw);
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 26px;
+}
+.import-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+.import-top h2 {
+  font-size: 20px;
+}
+.import-top p {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+.import-privacy,
+.import-backup-hint,
+.import-meta {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.import-policy {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 20px 0;
+}
+.import-policy select {
+  display: block;
+  margin-top: 9px;
+  width: 100%;
+  font-size: 12px;
+  padding: 12px;
+}
+.import-counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 18px 0;
+}
+.import-counts > div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--bg);
+}
+.import-counts strong {
+  display: block;
+  font-size: 26px;
+}
+.import-counts span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.import-details {
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 12px;
+}
+.import-details summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.import-details ul {
+  padding: 0;
+  list-style: none;
+  max-height: 280px;
+  overflow: auto;
+}
+.import-details li {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.import-details li p {
+  color: var(--text);
+  margin: 6px 0;
+  line-height: 1.6;
+}
+.import-details label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.import-details small {
+  color: var(--muted);
+}
+.import-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+.import-error {
+  color: #b43930;
+  background: #fff0ee;
+  border: 1px solid #e6b6b0;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+[data-theme="dark"] .import-error {
+  color: #ffd3ce;
+  background: #502b29;
+  border-color: #8c504b;
+}
+@media (max-width: 600px) {
+  #excel-review {
+    padding: 18px;
+  }
+  .import-counts {
+    grid-template-columns: 1fr;
+  }
+  .import-counts > div {
+    padding: 12px;
+  }
+  .import-counts strong {
+    font-size: 22px;
+  }
+  .import-actions > .button {
+    width: 100%;
+  }
+  .heading-actions {
+    flex-wrap: wrap;
+    flex-shrink: 1;
+  }
+}
+.data-tools > div {
+  flex-wrap: wrap;
+}

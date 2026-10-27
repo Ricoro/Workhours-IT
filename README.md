@@ -78,6 +78,22 @@ Tests start their own server on port 5174 and never reuse your development serve
 
 Exports preserve the example workbook's seven columns: `Account`, `Date`, `Quantity`, `Employee`, `Item`, `Notes`, `Project`. Each company allocation is a separate Excel row, with a numeric quantity, Excel date, `WH` item and `WH_<company>` project. Tabs use full English month names and years, such as `October 2026` and `January 2027`. A Summary sheet and monthly company totals are included. Existing entries and restored backups also export with employee `12`. The app generates a new `.xlsx`; it does not modify or import the supplied `.xlsb` workbook, historical records, formatting or macros. No example company records are bundled in the app or committed.
 
+## Import your existing Excel locally
+
+Click **Import Excel** next to Export month and select an `.xlsb` or `.xlsx` file (up to 20 MB). Your file is parsed in the browser, never uploaded. The parser is bundled locally and loaded only when needed. It understands the original Account, Date, Quantity and Notes columns, shifted column positions, Dutch/English month tabs, and the new app's exports.
+
+Before saving, the review shows:
+
+- Entries to add, proposed date corrections, unfinished rows and ignored non-work sheets.
+- A choice between the worksheet's month/year (keeping the day) or original cell dates. Review date corrections carefully; impossible dates and invalid rows block the whole import.
+- Exact matches and previously imported source rows are skipped. Same-company/date/hours rows with different descriptions are flagged as **possible duplicates** and skipped by default. Select **Import this row anyway** only when it represents different work.
+
+Use **Download existing backup** before confirming. Import adds new records without replacing existing ones. If another tab changes entries during review, the entire commit is rejected and the file must be selected again. Reimporting the same file does not add duplicate source rows. Legitimate repeated rows in the source are kept according to their occurrence counts.
+
+Under **Backup & restore**, **Undo last Excel import** removes unchanged entries from the most recent Excel import. Entries edited afterwards and unrelated/manual entries are kept. Only the latest import can be undone; JSON restore is a separate merge operation. Linked Excel output refreshes after import and undo.
+
+To migrate the old workbook into your current app, select **IT UREN.xlsb**, review date differences and possible overlaps, then confirm. No download from this chat is required. For a fresh browser with no entries, import the current `IT-hours.xlsx` first, then the old `.xlsb`. Company records and original files must never be committed to the public repository.
+
 ## Automatic Excel file and OneDrive
 
 In **desktop Chrome or Edge**, use **Link Excel folder** and grant access to a folder you choose. After every committed save, edit, deletion or restore, the app rewrites `IT-hours.xlsx` with **all stored months**, including summary totals. Existing files with that name require confirmation before replacement. Export failure does not discard the saved browser entry; the status explains the failure. If Excel locks the file, close it and reconnect the folder to retry.
